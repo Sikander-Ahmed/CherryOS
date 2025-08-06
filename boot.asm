@@ -10,6 +10,8 @@ times 33 db 0 ; the total size is 33 bytes, go to osdev.org/FAT to see why
 
 start:
     jmp 0x7c0:step2
+
+
 step2:
     cli ; clear Interrupts
     mov ax, 0x7c0 ; data segment start
@@ -19,9 +21,23 @@ step2:
     mov ax, 0x00 ; start of stack
     mov ss, ax ; ss is stack segment
     mov sp, 0x7c00 ; stack pointer now at 
+    sti ; enables interrupts
 
-    sti ; enables Interrupts
-    mov si, message
+    mov ah, 2 ; read sector
+    mov al, 1 ; one sector to read
+    mov ch, 0 ; cylinder low 8 bits
+    mov cl, 2 ; read sector 2
+    mov dh, 0 ; head number
+    mov bx, buffer
+    int 0x13
+    jc error
+
+    mov si, buffer
+    call print
+    jmp $   
+     
+error:
+    mov si, error_message
     call print
     jmp $
 
@@ -41,7 +57,9 @@ print_char:
     int 0x10
     ret
 
-message: db 'Hello World!', 0
+error_message: db 'Failed to load sector', 0
 
 times 510-($ - $$) db 0 ; making the file 512 bytes no matter what
 dw 0xAA55 ; little endian so we are putting it backwards
+
+buffer: 
