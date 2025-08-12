@@ -3,7 +3,7 @@ OUTPUT_FORMAT(binary)
 SECTIONS
 {
     . = 1M; 
-    .text : ALIGN(4096)
+    .text : ALIGN(4096)   
     {
         *(.text)
     }
@@ -25,6 +25,6 @@ SECTIONS
     }
     .asm : ALIGN(4096)
     {
-        *(,asm)
+        *(.asm)
     }
 }
