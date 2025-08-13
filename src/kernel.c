@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include "idt/idt.h"
+#include "io/io.h"
 
 
 uint16_t* video_mem = 0; // This address is used for outputting text to the screen, 1 byte for the char, and another for the color
@@ -65,5 +66,5 @@ void kernel_main() {
     print("Hello World!\nYOOOOOOOOOOOO");
 
     idt_init(); // initialze the global descriptor table
-    
+
 }
