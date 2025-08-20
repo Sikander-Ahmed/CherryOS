@@ -2,7 +2,7 @@
 #include "heap.h"
 #include "config.h"
 #include "kernel.h"
-
+#include "memory/memory.h"
 
 struct heap kernel_heap;
 
@@ -22,6 +22,16 @@ void kheap_init() {
 
     }
 
+}
+
+void* kzalloc(size_t size) {
+    void* ptr = kmalloc(size);
+    memset(ptr, 0x00, size);
+    if (!ptr) {
+        return 0;
+    }
+
+    return ptr;
 }
 
 void* kmalloc(size_t size) {

@@ -30,8 +30,6 @@ start:
     mov al, 00000001b ; put it in x86 mode
     out 0x21, al
     ; end remap of master PIC
-    
-    sti
 
     call kernel_main
     jmp $
