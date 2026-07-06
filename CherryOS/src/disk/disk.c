@@ -1,6 +1,12 @@
 #include "io/io.h"
+#include "disk/disk.h"
+#include "memory/memory.h"
+#include "config.h"
+#include "status.h"
 
-int disk_read_sector(int lba, int total, void *buffer) {
+struct disk disk;
+
+int disk_read_sector(int lba, int total, void *buf) {
     outb(0x1F6, 0xE0 | (lba >> 24));
 outb(0x1F2, total); // making the ATA controller
 outb(0x1F3, (unsigned char)(lba & 0xFF));
@@ -8,8 +14,8 @@ outb(0x1F4, (unsigned char)(lba >> 8));
 outb(0x1F5, (unsigned char)(lba >> 16));
 outb(0x1F7, 0x20);
 
-unsigned short* ptr = (unsigned short*)buf;
-for (int b = 0; b < total: b++) {
+unsigned short* ptr = (unsigned short*) buf;
+for (int b = 0; b < total; b++) {
     // wait for the buffer to be ready
     char c = insb(0x1F7);
     while (!(c & 0x08)) { // checking for a flag, magic numbers
@@ -24,4 +30,26 @@ for (int b = 0; b < total: b++) {
 }
 
 return 0;
+}
+
+void disk_search_and_init() {
+    memset(&disk, 0, sizeof(struct disk));
+    disk.type = CHERRYOS_DISK_TYPE_REAL;
+    disk.sector_size = CHERRYOS_SECTOR_SIZE;
+}
+
+struct disk* disk_get(int index) {
+    if (index != 0) {
+        return 0;
+    }
+
+    return &disk;
+}
+
+int disk_read_block(struct disk* idisk, unsigned int lba, int total, void* buf) {
+    if (idisk != &disk) {
+        return -EIO;
+    }
+    
+    return disk_read_sector(lba, total, buf);
 }

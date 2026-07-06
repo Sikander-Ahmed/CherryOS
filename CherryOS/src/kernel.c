@@ -5,6 +5,7 @@
 #include "io/io.h"
 #include "memory/heap/kheap.h"
 #include "memory/paging/paging.h"
+#include "disk/disk.h"
 
 uint16_t* video_mem = 0; // This address is used for outputting text to the screen, 1 byte for the char, and another for the color
 uint16_t  terminal_row, terminal_col = 0;
@@ -70,6 +71,8 @@ void kernel_main() {
 
     kheap_init(); // initalize the heap
 
+    disk_search_and_init(); // initialize the disk
+
     idt_init(); // initialze the global descriptor table
 
     kernel_chunk = paging_new_4gb(PAGING_IS_WRITABLE | PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL); // setup paging
@@ -82,7 +85,9 @@ void kernel_main() {
 
     paging_switch(paging_4gb_chunk_get_direcotry(kernel_chunk)); // switch to kernel paging chunk
 
+
     enable_paging(); // enable paging
+
 
     enable_interrupts(); // enable system interrupts
     
