@@ -6,6 +6,8 @@
 #include "memory/heap/kheap.h"
 #include "memory/paging/paging.h"
 #include "disk/disk.h"
+#include "fs/pparser.h"
+#include "string/string.h"
 
 uint16_t* video_mem = 0; // This address is used for outputting text to the screen, 1 byte for the char, and another for the color
 uint16_t  terminal_row, terminal_col = 0;
@@ -47,13 +49,7 @@ void terminal_initialize() {
     }
 }
 
-size_t strlen(const char* str) {
-    size_t len = 0;
-    while(str[len]) {
-        len++;
-    }
-    return len;
-}
+
 
 void print(const char* str) {
     size_t len = strlen(str);
@@ -91,5 +87,10 @@ void kernel_main() {
 
     enable_interrupts(); // enable system interrupts
     
+    struct path_root* path_root = pathparser_parse("0:/shell.ext", NULL); // parse a path for a test
+    
+    if (path_root) {
+        pathparser_free(path_root);
+    }
 
 }

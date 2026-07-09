@@ -5,5 +5,6 @@
 #define EIO 1 // in out error
 #define EINVARG 2
 #define ENOMEM 3
+#define EBADPATH 4
 
 #endif 
